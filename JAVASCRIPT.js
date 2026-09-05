@@ -164,7 +164,9 @@ function searchStudent() {
         .toUpperCase();
 
 
-    // Empty input
+    // ======================================
+    // EMPTY INPUT
+    // ======================================
 
     if (id === "") {
 
@@ -185,7 +187,9 @@ function searchStudent() {
     const student = students[id];
 
 
-    // Student not found
+    // ======================================
+    // STUDENT NOT FOUND
+    // ======================================
 
     if (!student) {
 
@@ -203,7 +207,9 @@ function searchStudent() {
     }
 
 
-    // Student found
+    // ======================================
+    // STUDENT FOUND
+    // ======================================
 
     searchMessage.textContent =
         "✓ Student details found.";
@@ -272,8 +278,7 @@ function searchStudent() {
         remindMeBtn.style.display =
             "none";
 
-        remindMeBtn.href =
-            "#";
+        remindMeBtn.removeAttribute("href");
 
         reminderStatus.textContent =
             "Your fees are fully paid.";
@@ -302,7 +307,15 @@ function searchStudent() {
         setWhatsAppLink(student);
 
 
-        updateReminderButton(id);
+        // Reminder instruction
+        reminderStatus.textContent =
+            "💬 Click \"Send WhatsApp Reminder\" to send your personalized fee reminder.";
+
+        reminderStatus.style.color =
+            "#16a34a";
+
+        reminderStatus.style.display =
+            "block";
 
     }
 
@@ -327,7 +340,9 @@ function formatCurrency(amount) {
 
 function setWhatsAppLink(student) {
 
-    // Personalized message
+    // ======================================
+    // PERSONALIZED MESSAGE
+    // ======================================
 
     const message =
         "Hello " + student.name +
@@ -338,7 +353,9 @@ function setWhatsAppLink(student) {
         ". Please make the payment at the earliest.";
 
 
-    // Detect device
+    // ======================================
+    // DETECT DEVICE
+    // ======================================
 
     const isMobile =
         /Android|iPhone|iPad|iPod/i.test(
@@ -350,7 +367,7 @@ function setWhatsAppLink(student) {
 
 
     // ======================================
-    // MOBILE
+    // MOBILE → WHATSAPP APP
     // ======================================
 
     if (isMobile) {
@@ -365,7 +382,7 @@ function setWhatsAppLink(student) {
 
 
     // ======================================
-    // LAPTOP / DESKTOP
+    // LAPTOP → WHATSAPP WEB
     // ======================================
 
     else {
@@ -379,67 +396,33 @@ function setWhatsAppLink(student) {
     }
 
 
-    // Put URL directly into the real link
+    // ======================================
+    // SET DIRECT LINK
+    // ======================================
 
     remindMeBtn.href =
         whatsappURL;
 
-
-    // Make sure browser handles it normally
-
     remindMeBtn.target =
         "_self";
 
-
-    console.log(
-        "WhatsApp URL:",
-        whatsappURL
-    );
+    remindMeBtn.textContent =
+        "🔔 Send WhatsApp Reminder";
 
 }
 
 
 // ==========================================
-// UPDATE REMINDER BUTTON
+// PREVENT "#" FROM APPEARING
 // ==========================================
 
-function updateReminderButton(studentId) {
+remindMeBtn.addEventListener("click", function(event) {
 
-    const key =
-        "reminder_" + studentId;
+    if (!remindMeBtn.href ||
+        remindMeBtn.getAttribute("href") === "#") {
 
-    const enabled =
-        localStorage.getItem(key) === "true";
-
-
-    if (enabled) {
-
-        remindMeBtn.textContent =
-            "🔕 Turn Reminder OFF";
-
-        reminderStatus.textContent =
-            "✅ Daily WhatsApp reminder is ON until the fee is fully paid.";
-
-        reminderStatus.style.color =
-            "#16a34a";
+        event.preventDefault();
 
     }
 
-    else {
-
-        remindMeBtn.textContent =
-            "🔔 Remind Me";
-
-        reminderStatus.textContent =
-            "🔕 Daily WhatsApp reminder is OFF.";
-
-        reminderStatus.style.color =
-            "#dc2626";
-
-    }
-
-
-    reminderStatus.style.display =
-        "block";
-
-}
+});
