@@ -329,13 +329,31 @@ remindMeBtn.addEventListener("click", function () {
         student.dueDate +
         ". Please make the payment at the earliest.";
 
+    // Create WhatsApp URL based on device
 
-    // Create WhatsApp URL
-    const whatsappURL =
-    "https://wa.me/91" +
-    student.whatsappNumber +
-    "?text=" +
-    encodeURIComponent(message);
+let whatsappURL;
+
+const isMobile =
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+if (isMobile) {
+
+    // 📱 Mobile → WhatsApp app
+    whatsappURL =
+        "whatsapp://send?phone=91" +
+        student.whatsappNumber +
+        "&text=" +
+        encodeURIComponent(message);
+
+} else {
+
+    // 💻 Laptop/Desktop → WhatsApp Web
+    whatsappURL =
+        "https://web.whatsapp.com/send?phone=91" +
+        student.whatsappNumber +
+        "&text=" +
+        encodeURIComponent(message);
+}
 
 
     // Open WhatsApp
