@@ -358,8 +358,10 @@ if (isMobile) {
         encodeURIComponent(message);
 
 }
-
+    alert(whatsappURL);
 window.location.href = whatsappURL;
+
+
 
     // Show status
     reminderStatus.textContent =
