@@ -339,10 +339,7 @@ remindMeBtn.addEventListener("click", function () {
 
 
     // Open WhatsApp
-    window.open(
-        whatsappURL,
-        "_blank"
-    );
+   window.location.href = whatsappURL;
 
 
     // Show status
