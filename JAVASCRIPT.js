@@ -358,9 +358,17 @@ if (isMobile) {
         encodeURIComponent(message);
 
 }
-    alert(whatsappURL);
-window.location.href = whatsappURL;
+  
+const whatsappLink = document.createElement("a");
 
+whatsappLink.href = whatsappURL;
+whatsappLink.target = "_self";
+
+document.body.appendChild(whatsappLink);
+
+whatsappLink.click();
+
+whatsappLink.remove();
 
 
     // Show status
