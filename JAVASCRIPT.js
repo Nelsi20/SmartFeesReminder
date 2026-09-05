@@ -21,11 +21,13 @@ const paymentStatus = document.getElementById("paymentStatus");
 
 const remindMeBtn = document.getElementById("remindMeBtn");
 const reminderStatus = document.getElementById("reminderStatus");
+
 searchMessage.textContent =
     "Loading student information...";
 
 searchMessage.style.color =
     "#6b7280";
+
 
 // ==========================================
 // LOAD STUDENT DATA
@@ -64,8 +66,10 @@ fetch("student_result.csv?t=" + Date.now())
             const student = {};
 
             headers.forEach((header, index) => {
+
                 student[header] =
                     values[index]?.trim() || "";
+
             });
 
             const id = student["StudentID"];
@@ -100,7 +104,9 @@ fetch("student_result.csv?t=" + Date.now())
 
                     whatsappNumber:
                         student["WhatsAppNumber"] || ""
+
                 };
+
             }
 
         });
@@ -109,6 +115,12 @@ fetch("student_result.csv?t=" + Date.now())
             "Students loaded:",
             Object.keys(students).length
         );
+
+        searchMessage.textContent =
+            "Enter your Student ID to continue.";
+
+        searchMessage.style.color =
+            "#6b7280";
 
     })
 
@@ -119,7 +131,8 @@ fetch("student_result.csv?t=" + Date.now())
         searchMessage.textContent =
             "Unable to load student data.";
 
-        searchMessage.style.color = "#dc2626";
+        searchMessage.style.color =
+            "#dc2626";
 
     });
 
@@ -132,57 +145,80 @@ searchBtn.addEventListener("click", searchStudent);
 
 
 // Allow Enter key
+
 studentIdInput.addEventListener("keydown", function(event) {
 
     if (event.key === "Enter") {
+
         searchStudent();
+
     }
 
 });
+
+
 function searchStudent() {
 
     const id = studentIdInput.value
         .trim()
         .toUpperCase();
 
+
     // Empty input
+
     if (id === "") {
 
         searchMessage.textContent =
             "Please enter your Student ID.";
 
-        searchMessage.style.color = "#dc2626";
+        searchMessage.style.color =
+            "#dc2626";
 
-        studentDetails.style.display = "none";
+        studentDetails.style.display =
+            "none";
 
         return;
+
     }
+
 
     const student = students[id];
 
+
     // Student not found
+
     if (!student) {
 
         searchMessage.textContent =
             "Student ID not found. Please check and try again.";
 
-        searchMessage.style.color = "#dc2626";
+        searchMessage.style.color =
+            "#dc2626";
 
-        studentDetails.style.display = "none";
+        studentDetails.style.display =
+            "none";
 
         return;
+
     }
 
+
     // Student found
+
     searchMessage.textContent =
         "✓ Student details found.";
 
-    searchMessage.style.color = "#16a34a";
+    searchMessage.style.color =
+        "#16a34a";
 
-    studentDetails.style.display = "block";
+    studentDetails.style.display =
+        "block";
 
 
-    // Student information
+    // ======================================
+    // STUDENT INFORMATION
+    // ======================================
+
     displayStudentId.textContent =
         student.studentId;
 
@@ -193,7 +229,10 @@ function searchStudent() {
         student.department;
 
 
-    // Fee information
+    // ======================================
+    // FEE INFORMATION
+    // ======================================
+
     totalFee.textContent =
         formatCurrency(student.totalFee);
 
@@ -207,7 +246,10 @@ function searchStudent() {
         formatCurrency(student.fineAmount);
 
 
-    // Payment information
+    // ======================================
+    // PAYMENT INFORMATION
+    // ======================================
+
     dueDate.textContent =
         student.dueDate || "--";
 
@@ -215,7 +257,10 @@ function searchStudent() {
         formatCurrency(student.totalPayable);
 
 
-    // Payment status
+    // ======================================
+    // PAYMENT STATUS
+    // ======================================
+
     if (student.pendingAmount <= 0) {
 
         paymentStatus.textContent =
@@ -227,6 +272,9 @@ function searchStudent() {
         remindMeBtn.style.display =
             "none";
 
+        remindMeBtn.href =
+            "#";
+
         reminderStatus.textContent =
             "Your fees are fully paid.";
 
@@ -236,7 +284,9 @@ function searchStudent() {
         reminderStatus.style.display =
             "block";
 
-    } else {
+    }
+
+    else {
 
         paymentStatus.textContent =
             "⚠ PENDING";
@@ -247,8 +297,15 @@ function searchStudent() {
         remindMeBtn.style.display =
             "block";
 
+
+        // Create WhatsApp link
+        setWhatsAppLink(student);
+
+
         updateReminderButton(id);
+
     }
+
 }
 
 
@@ -265,62 +322,13 @@ function formatCurrency(amount) {
 
 
 // ==========================================
-// REMINDER BUTTON
+// CREATE WHATSAPP LINK
 // ==========================================
-remindMeBtn.addEventListener("click", function () {
 
-    const id =
-        studentIdInput.value.trim().toUpperCase();
+function setWhatsAppLink(student) {
 
-    const student = students[id];
+    // Personalized message
 
-    // Check student
-    if (!student) {
-
-        reminderStatus.textContent =
-            "Please search for your student details first.";
-
-        reminderStatus.style.color =
-            "#dc2626";
-
-        reminderStatus.style.display =
-            "block";
-
-        return;
-    }
-
-    // Check pending amount
-    if (student.pendingAmount <= 0) {
-
-        reminderStatus.textContent =
-            "✓ Your fees are fully paid. No reminder is required.";
-
-        reminderStatus.style.color =
-            "#16a34a";
-
-        reminderStatus.style.display =
-            "block";
-
-        return;
-    }
-
-    // Check WhatsApp number
-    if (!student.whatsappNumber) {
-
-        reminderStatus.textContent =
-            "WhatsApp number is not available.";
-
-        reminderStatus.style.color =
-            "#dc2626";
-
-        reminderStatus.style.display =
-            "block";
-
-        return;
-    }
-
-
-    // Create personalized message
     const message =
         "Hello " + student.name +
         ", your college fee payment of ₹" +
@@ -329,59 +337,66 @@ remindMeBtn.addEventListener("click", function () {
         student.dueDate +
         ". Please make the payment at the earliest.";
 
-    // Create WhatsApp URL based on device
 
-// ==========================================
-// OPEN WHATSAPP
-// ==========================================
+    // Detect device
 
-const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isMobile =
+        /Android|iPhone|iPad|iPod/i.test(
+            navigator.userAgent
+        );
 
-let whatsappURL;
 
-if (isMobile) {
+    let whatsappURL;
 
-    // 📱 Mobile → WhatsApp universal link
-    whatsappURL =
-        "https://wa.me/91" +
-        student.whatsappNumber +
-        "?text=" +
-        encodeURIComponent(message);
 
-} else {
+    // ======================================
+    // MOBILE
+    // ======================================
 
-    // 💻 Laptop/Desktop → WhatsApp Web
-    whatsappURL =
-        "https://web.whatsapp.com/send?phone=91" +
-        student.whatsappNumber +
-        "&text=" +
-        encodeURIComponent(message);
+    if (isMobile) {
+
+        whatsappURL =
+            "https://wa.me/91" +
+            student.whatsappNumber +
+            "?text=" +
+            encodeURIComponent(message);
+
+    }
+
+
+    // ======================================
+    // LAPTOP / DESKTOP
+    // ======================================
+
+    else {
+
+        whatsappURL =
+            "https://web.whatsapp.com/send?phone=91" +
+            student.whatsappNumber +
+            "&text=" +
+            encodeURIComponent(message);
+
+    }
+
+
+    // Put URL directly into the real link
+
+    remindMeBtn.href =
+        whatsappURL;
+
+
+    // Make sure browser handles it normally
+
+    remindMeBtn.target =
+        "_self";
+
+
+    console.log(
+        "WhatsApp URL:",
+        whatsappURL
+    );
 
 }
-  
-const whatsappLink = document.createElement("a");
-
-whatsappLink.href = whatsappURL;
-whatsappLink.target = "_self";
-
-document.body.appendChild(whatsappLink);
-
-whatsappLink.click();
-
-whatsappLink.remove();
-
-
-    // Show status
-    reminderStatus.textContent =
-        "✓ WhatsApp reminder opened.";
-
-    reminderStatus.style.color =
-        "#16a34a";
-
-    reminderStatus.style.display =
-        "block";
-
-});
 
 
 // ==========================================
@@ -408,7 +423,9 @@ function updateReminderButton(studentId) {
         reminderStatus.style.color =
             "#16a34a";
 
-    } else {
+    }
+
+    else {
 
         remindMeBtn.textContent =
             "🔔 Remind Me";
