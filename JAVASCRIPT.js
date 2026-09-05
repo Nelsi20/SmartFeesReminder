@@ -331,18 +331,21 @@ remindMeBtn.addEventListener("click", function () {
 
     // Create WhatsApp URL based on device
 
-let whatsappURL;
+// ==========================================
+// OPEN WHATSAPP
+// ==========================================
 
-const isMobile =
-    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+let whatsappURL;
 
 if (isMobile) {
 
-    // 📱 Mobile → WhatsApp app
+    // 📱 Mobile → WhatsApp universal link
     whatsappURL =
-        "whatsapp://send?phone=91" +
+        "https://wa.me/91" +
         student.whatsappNumber +
-        "&text=" +
+        "?text=" +
         encodeURIComponent(message);
 
 } else {
@@ -353,12 +356,10 @@ if (isMobile) {
         student.whatsappNumber +
         "&text=" +
         encodeURIComponent(message);
+
 }
 
-
-    // Open WhatsApp
-   window.location.href = whatsappURL;
-
+window.location.href = whatsappURL;
 
     // Show status
     reminderStatus.textContent =
